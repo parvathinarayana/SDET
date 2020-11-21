@@ -1,29 +1,56 @@
-package JavaActivity3_2;
+package TestNG_Sessions;
 
-import java.util.HashSet;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 public class Activity3_2 {
-
-	public static void main(String[] args) {
-		HashSet<String> hs = new HashSet<>();
-		hs.add("A");
-		hs.add("B");
-		hs.add("C");
-		hs.add("D");
-		hs.add("E");
-		hs.add("F");
-		System.out.println("Size of the hashset: " + hs.size());
-		System.out.println("Original hashset is: " + hs);
-		if(hs.remove("X")) {
-			System.out.println("'X' was removed from the Hashset");
-		}
-		else {
-			System.out.println("'X' was not found in the Hashset");
-		}
-		System.out.println("Whether 'G' is found in the hashset: " + hs.contains("G"));
-		System.out.println("Whether 'E' is found in the hashset: " + hs.contains("E"));
-		System.out.println("Removing 'C' from the hashset: " + hs.remove("C"));
-		System.out.println("Updated hashset is: " + hs);
+	
+	WebDriver driver;
+	
+	@BeforeTest(alwaysRun = true)
+	public void beforeMethod() {
+		driver = new FirefoxDriver();
+		driver.get("https://www.training-support.net/selenium/target-practice");
+	}
+	
+	@Test(groups = {"HeaderTests","ButtonTests"})
+	public void pageTitleTest() {
+		System.out.println("Title of the page is : " + driver.getTitle());
+		Assert.assertEquals(driver.getTitle(), "Target Practice");
+	}
+	
+    @Test (dependsOnMethods = {"pageTitleTest"}, groups = {"HeaderTests"})
+    public void HeaderTest1() {
+        WebElement header3 = driver.findElement(By.cssSelector("h3#third-header"));
+        Assert.assertEquals(header3.getText(), "Third header");
+    }
+    
+    @Test (dependsOnMethods = {"pageTitleTest"}, groups = {"HeaderTests"})
+    public void HeaderTest2() {
+        WebElement header5 = driver.findElement(By.cssSelector("h3#third-header"));
+        Assert.assertEquals(header5.getCssValue("color"), "rgb(251, 189, 8)");
+    }
+    
+    @Test (dependsOnMethods = {"pageTitleTest"}, groups = {"ButtonTests"})
+    public void ButtonTest1() {
+        WebElement button1 = driver.findElement(By.cssSelector("button.olive"));
+        Assert.assertEquals(button1.getText(), "Olive");
+    }
+    
+    @Test (dependsOnMethods = {"pageTitleTest"}, groups = {"ButtonTests"})
+    public void ButtonTest2() {
+        WebElement button2 = driver.findElement(By.cssSelector("button.brown"));
+        Assert.assertEquals(button2.getCssValue("color"), "rgb(255, 255, 255)");
+    }
+	
+	@AfterTest(alwaysRun = true)
+	public void afterMethod() {
+		driver.close();
 	}
 	
 }

@@ -1,38 +1,54 @@
-package JavaActivity4_2;
+package TestNG_Sessions;
 
-import java.io.File;
-import java.io.IOException;
-import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 public class Activity4_2 {
-    public static void main(String[] args) throws IOException {
-        try {
-            File file = new File("C:\\Users\\parvathi\\eclipse-workspace\\SDET java\\bin\\JavaActivity4_2/newfile.txt");
-            boolean fStatus = file.createNewFile();
-            if(fStatus) {
-                System.out.println("File created successfully!");
-            } else {
-                System.out.println("File already exists at this path.");
-            }
+    WebDriver driver;
+    WebDriverWait wait;
 
-            //get the file Object
-            File fileUtil = FileUtils.getFile("C:\\Users\\parvathi\\eclipse-workspace\\SDET java\\bin\\JavaActivity4_2/newfile.txt");
-            //Read file
-            System.out.println("Data in file: " + FileUtils.readFileToString(fileUtil, "UTF8"));
-
-            //Create directory
-            File destDir = new File("resources");
-            //Copy file to directory
-            FileUtils.copyFileToDirectory(file, destDir);
-
-            //Get file from new directory
-            File newFile = FileUtils.getFile(destDir, "newfile.txt");
-            //Read data from file
-            String newFileData = FileUtils.readFileToString(newFile, "UTF8");
-            //Print it
-            System.out.println("Data in new file: " + newFileData);
-        } catch(IOException errMessage) {
-            System.out.println(errMessage);
-        }
+    @BeforeClass
+    public void beforeClass() {
+        driver = new FirefoxDriver();
+        wait = new WebDriverWait(driver, 10);
+        
+        //Open browser
+        driver.get("https://www.training-support.net/selenium/login-form");
     }
+    
+    @DataProvider(name = "Authentication")
+    public static Object[][] credentials() {
+        return new Object[][] { { "admin", "password" }};
+    }
+    
+    @Test (dataProvider = "Authentication")
+    public void loginTestCase(String username, String password) {
+        //Find username and pasword fields
+        WebElement usernameField = driver.findElement(By.id("username"));
+        WebElement passwordField = driver.findElement(By.id("password"));
+        
+        //Enter values
+        usernameField.sendKeys(username);
+        passwordField.sendKeys(password);
+        
+        //Click Log in
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+        
+        //Assert Message
+        String loginMessage = driver.findElement(By.id("action-confirmation")).getText();
+        Assert.assertEquals(loginMessage, "Welcome Back, admin");
+    }
+
+    @AfterClass
+    public void afterClass() {
+        //Close browser
+        driver.close();
+    }
+
 }

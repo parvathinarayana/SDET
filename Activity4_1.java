@@ -1,28 +1,50 @@
-package JavaActivity4_1;
+package TestNG_Sessions;
 
-import java.util.*;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
 public class Activity4_1 {
+    WebDriver driver;
+    WebDriverWait wait;
 
-	public static void main(String[] args) {
-		Scanner scan = new Scanner(System.in);
-		ArrayList<Integer> list = new ArrayList<Integer>();
-		Random indexGen = new Random();
-		
-		System.out.print("Enter integers please ");
-        System.out.println("(EOF or non-integer to terminate): ");
+    @BeforeClass
+    public void beforeClass() {
+        driver = new FirefoxDriver();
+        wait = new WebDriverWait(driver, 10);
+        
+        //Open browser
+        driver.get("https://www.training-support.net/selenium/login-form");
+    }
+    
+    @Test
+    @Parameters({"username", "password"})
+    public void loginTestCase(String username, String password) {
+        //Find username and pasword fields
+        WebElement usernameField = driver.findElement(By.id("username"));
+        WebElement passwordField = driver.findElement(By.id("password"));
+        
+        //Enter values
+        usernameField.sendKeys(username);
+        passwordField.sendKeys(password);
+        
+        //Click Log in
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+        
+        //Assert Message
+        String loginMessage = driver.findElement(By.id("action-confirmation")).getText();
+        Assert.assertEquals(loginMessage, "Welcome Back, admin");
+    }
 
-        while(scan.hasNextInt()) {
-            list.add(scan.nextInt());
-        }
-
-        Integer nums[] = list.toArray(new Integer[0]);
-        int index = indexGen.nextInt(nums.length);
-        System.out.println("Index value generated: " + index);
-        System.out.println("Value in array at generated index: " + nums[index]);
-
-        scan.close();
-
-	}
+    @AfterClass
+    public void afterClass() {
+        //Close browser
+        driver.close();
+    }
 
 }
