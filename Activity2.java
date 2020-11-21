@@ -1,24 +1,43 @@
-package JavaActivity1_2;
+package JobBoardProject;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import junit.framework.Assert;
 
 public class Activity2 {
 
-	public static void main(String[] args) {
-		int[] numbers = {10, 77, 10, 54, -11, 10};
-		int sum = 0;
-		for (int i=0; i<6; i++) {
-			if (numbers[i]==10) {
-				sum += numbers[i];
-			}
-			else {
-				sum = sum;
-			}
-		}
-		if (sum==30) {
-			System.out.println("Sum value is 30.");
-		}
-		else {
-			System.out.println("Sum value is not 30.");
-		}
-	}
+	    WebDriver driver;
+	    
+	    @BeforeMethod
+	    public void beforeMethod() {
+	        driver = new FirefoxDriver();
+	        
+	        driver.get("https://alchemy.hguy.co/jobs/");
+	    }
+
+	    @Test
+	    public void headerTestCase() {
+	    	
+	    	// Fetching the 1st header of the webpage
+	    	String heading= driver.findElement(By.xpath("//h1[@class='entry-title']")).getText();
+	            
+	        System.out.println("Website heading is: " + heading.trim());
+	        
+	        // Assertion for 1st header with catch block to catch exceptions
+	        try {
+	        Assert.assertEquals("Welcome to Alchemy Jobs", heading.trim());
+	        driver.close();
+	        }
+	        
+	        catch(Exception ex){
+	        	
+	        	ex.printStackTrace();
+	        }
+	                  
+	    }
 
 }
